@@ -1,15 +1,17 @@
 import matplotlib.pyplot as pl
 import numpy as np
 
-#f = open('truck_food_profit.in') # 1 feature
-f = open ('housing_prices.in') # 2 features
+f = open('truck_food_profit.in') # 1 feature
+#f = open ('housing_prices.in') # 2 features
 
 data = f.readlines()
 
 # we need to put an arbitrary initial value in theta
-theta = np.array([[0, .5, 0.5]]) # theta will hold the value that explains the model of our algorithm
-features_x = 2 # quantity of features in the dataset, ex: 2 features in x
-#print(len(data[0].split(',')))
+theta = np.array([[0, .1, .2, .3, .4]]) # theta will hold the value that explains the model of our algorithm (number of features + 1 [bias that is the first!])
+
+# automaticaly gets the number of features
+features_x = (np.array([line.split(',')[:] for line in data]).shape[1]) - 1 # quantity of features in the dataset, (number of columns - 1) ex: 2 features in x
+theta = np.array(theta[: , 0 : features_x + 1]) # reshape de size of theta
 train = 0.7 # percentage of all dataset that will be used to train our model
 # the last column of our data must be the value that is dependant of these features (our y)
 
@@ -19,9 +21,9 @@ y = np.array([line.split(',')[features_x:(features_x+1)] for line in data], dtyp
 # discretizing our features (needed if the range is to big)
 x = x / (np.max(x, 0))
 
-print(np.max(x, 0))
-print(np.min(x, 0))
-
+# just to see how it works
+#print(np.max(x, 0))
+#print(np.min(x, 0))
 
 # add a column of 1's in the house features (so we could multiplicate this matrix with theta)
 x = np.insert(x, 0, 1, axis = 1)
@@ -41,7 +43,7 @@ def costFunction(x, y, theta):
     cost = np.sum((y_hat - y)**2)
     return cost / (2 * data_size)
 
-# predicted 'y' (used after we calculate our theta iwth gradient descendant)
+# predicted 'y' (used after we calculate our theta with gradient descendant)
 def predicted_y(x, theta):
     return (x.dot(theta.T))
 
@@ -58,17 +60,17 @@ def gradient_descendant(x, y, theta, alpha, n):
         J.append(costFunction(x, y, theta))
     return theta, J
 
-theta, J = gradient_descendant(x, y, theta, 0.01, 1000)
+theta, J = gradient_descendant(x, y, theta, 0.01, 1000) # applies gradient descendant to approach ou theta
 
-#print(theta)
-#print(costFunction(x_test, y_test, theta))
 #y_hat = predicted_y(x_train, theta)
-y_hat = predicted_y(x_test, theta)
-#pl.plot(y_train, '*', color = 'b')
-#pl.plot(y_hat, color = 'r')
-#pl.plot(x_train[:, 1], y_train, '*', color = 'b')
-#pl.plot(x_train[:, 1], y_hat, color = 'r')
-#pl.plot(x_test[:, 1], y_test, '*', color = 'b')
-#pl.plot(x_test[:, 1], y_hat, color = 'r')
+y_hat = predicted_y(x_test, theta) # calculate the predicted values that our model can get from the theta that we learned and our data test
 
-#pl.show()
+if features_x == 1: # if we can plot it in a linear model
+    #pl.plot(x_train[:, 1], y_train, '*', color = 'b')
+    #pl.plot(x_train[:, 1], y_hat, color = 'r')
+    pl.plot(x_test[:, 1], y_test, '*', color = 'b')
+    pl.plot(x_test[:, 1], y_hat, color = 'r')
+    pl.show()
+else:
+    print("theta:", theta)
+    print("error: ", costFunction(x_test, y_test, theta))
