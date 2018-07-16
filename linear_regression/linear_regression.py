@@ -60,12 +60,26 @@ def gradient_descendant(x, y, theta, alpha, n):
         J.append(costFunction(x, y, theta))
     return theta, J
 
-theta, J = gradient_descendant(x, y, theta, 0.01, 1000) # applies gradient descendant to approach ou theta
+# Defining MSE function:
+def MSE(y, y_hat):
+    m = y.shape[0]
+    return np.sum((y_hat - y)**2) / m
 
-#y_hat = predicted_y(x_train, theta)
+# Defining RMSE function:
+def RMSE(y, y_hat):
+    return np.sqrt(MSE(y, y_hat))
+
+theta, J = gradient_descendant(x, y, theta, 0.05, 10000) # applies gradient descendant to approach ou theta
+
 y_hat = predicted_y(x_test, theta) # calculate the predicted values that our model can get from the theta that we learned and our data test
 
+y_hat_test = x_test.dot(theta.T)
+rmse = RMSE(y_test, y_hat_test)
+print("RMSE Value: ", rmse)
+
 if features_x == 1: # if we can plot it in a linear model
+    print("theta:", theta)
+    print("error: ", costFunction(x_test, y_test, theta))
     #pl.plot(x_train[:, 1], y_train, '*', color = 'b')
     #pl.plot(x_train[:, 1], y_hat, color = 'r')
     pl.plot(x_test[:, 1], y_test, '*', color = 'b')
