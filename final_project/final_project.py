@@ -163,7 +163,19 @@ lda_hp = {
     'n_components': [1, 3]
 }
 
-hyperparameters_list = [etc_hp, dct_hp, lda_hp]
+hyperparameters_list = [etc_hp, dtc_hp, lda_hp]
 
+# run the list of algorithms
 print("Running classification algorithms...")
 for clf, hparams in zip(classification_list, hyperparameters_list):
+    grid = GridSearchCV(clf, hparams, cv = 5)
+    print('Running {} algorithm...'.format(clf.__class__.__name__)) # print the name of the algorithm
+    # train the model
+    model = grid.fit(x_train, y_train)
+    print('Best hyperparametes:')
+    print(model.best_estimator_)
+    # test with predicted values
+    y_hat = model.predict(x_test)
+    print('Results:')
+    print(classification_report(y_test, y_hat))
+    print('\n')

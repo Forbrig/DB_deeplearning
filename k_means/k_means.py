@@ -7,7 +7,7 @@ def init_centroids(n_clusters, centroids, data_size):
         centroids[i] = x[np.random.randint(data_size)]
     return centroids
 
-#cost function
+#cost function (seems a little bit off)
 def costFunction(x, centroids):
     costs = np.zeros((len(centroids),1))
     for i in range(x.shape[0]):
